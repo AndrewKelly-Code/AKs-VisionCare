@@ -1,0 +1,5 @@
+# IDE settings
+*.vscode
+
+# Dev Notes
+/docs/daily_dev_notes/
