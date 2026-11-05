@@ -15,9 +15,8 @@ This app is intended for all users who uses a computer, as everyone could benefi
 ## 2. Project Scope
 
 ### 2.1 In Scope
-- The app shall measure the time between blinks for the user
-- The app shall provide a reminder for the user to blink after a certain amount of time has past since they last blinked
-- The app shall use a webcam to be able to measure the time between blinks
+- The app shall provide a reminder for the user to close their eyes/blink after a certain amount of time has past since they last did so
+- The app shall use a webcam to be able to calculate when the user's closes their eye/blink
 - The app shall not store any personal information permanently
 - The app shall process all user information locally, without connecting to any external networks
 ### 2.2 Out of Scope
@@ -68,7 +67,6 @@ After successfully completing FR-01 and establishing a connection with the selec
 - AC-04: After a face has been successfully detected, the location around the detected face within the frame is marked and supplied to the subsequent landmark identifer component
 - AC-05: After successfully completing AC-04, the program shall appempt AC-02 again.
 
-
 ### FR-05: Facial Landmark Identification
 After successfully locating a face inside the video frame, as according to FR-04, the program shall identify the landmarks around the eye of the face inside the frame that is to be used to calculate the Eye Aspect Ratio
 
@@ -100,12 +98,40 @@ After a successful connection has been established to the selected camera, as ac
 - AC-10: If the camera device was disconnected during the calibration process, the program shall display and error message and return the user to the screen specified in FR-03.
 - AC-11: If there already exists a set of calibrated values for the selected camera, the user shall skip the calibration sequence
 
-### FR-08:
+### FR-08: Closed Eye Threshold
+An Eye Aspect Ratio that represents the predicted threshold for when the user closes their eye is assigned to the user. 
 
 ### FR-08 Acceptance Criteria:
-- AC-01:
+- AC-01: The program shall use the values of the close and open eye EAR value to generate a EAR score that would represent the user's eye being sufficiently closed
 
+### FR-09: Closed Eye Detection
+The program shall detect when the user's eye is sufficiently closed, in relation to the Eye Aspect Ratio score of the user in their closed state, using the scores captured in FR-07.
 
+### FR-09 Acceptance Criteria:
+- AC-01: The program shall attempt to detect a face inside the video frame captured from the selected camera device, as according to FR-04
+- AC-02: If FR-04 successfully completes, the location of the face marked in the video frame shall be passed to FR-05 to attempt to locate all required landmarks for the Eye Aspect Ratio equation
+- AC-03: If FR-05 successfully completes, the coordinates of each point it passed to FR-06 to be used to calculate the EAR score for the left and right eye
+- AC-04: The values returned from FR-06 shall be checked against a specified value from FR-08
+- AC-05: If the value is less then or equal to the value specified in FR-08, the program shall interpret that the user has closed their eyes sufficiently
+- AC-06: If the value is greater then the value specified in FR-08, the program shall interpret that the user has not sufficiently closed their eyes.
+
+### FR-10: Screen Dimming
+The brightness of the screen shall gradually lower according to a specified minimum brightness value, after a specified amount of time 
+
+### FR-10 Acceptance Criteria:
+- AC-01: The program shall gradually lower the brightness of the screen by a specified percentage 
+- AC-02: The brightness shall gradually lower over a specified amount of time
+- AC-03: The program shall not lower the brightness of the screen once a specified brightness is reached
+
+### FR-11: Resetting the Screen Dimming Using Eye Closure Detection
+The screen's brightness shall be reset to its brightness before the screen dimming took effect when the program detects that the user's eye has been sufficient closed
+
+### FR-11 Acceptance Criteria:
+- AC-01: The program shall lower the brightness of the screen according to FR-10
+- AC-02: The program shall attempt to detect an eye closure/blink from the user as according to FR-09
+- AC-03: If FR-09 successfully detects sufficient eye closure, the brightness of the screen shall be set to the value it was before the dimming began
+- AC-04: After AC-03 successfully completes, the program shall attempt to complete AC-01 again
+- AC-05: If AC-02 fails, the screen's brightness shall continue to lower as according to FR-10
 
 ## 4. Non-Functional Requirements
 
@@ -114,3 +140,6 @@ After a successful connection has been established to the selected camera, as ac
 ### NFR-01 Acceptance Criteria:
 
 ## 5. Assumptions and Constraints
+- For the app to properly work, there can be at most only one face detected in the video frame, as this version of the app does not have a method for distinquish the difference between the user's face and the face of other people in the video frame
+- The user uses the app in ideal lightning condition that isn't too bright or too dark for the program to be able to detect their face and facial landmarks
+- The program is specifically detecting eye closure, which includes blinks.
